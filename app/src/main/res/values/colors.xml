@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#007AFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="S50">#F8FAFC</color>
+    <color name="S100">#F1F5F9</color>
+    <color name="S200">#E2E8F0</color>
+    <color name="S300">#CBD5E1</color>
+    <color name="S400">#94A3B8</color>
+    <color name="S500">#64748B</color>
+    <color name="S600">#475569</color>
+    <color name="S700">#334155</color>
+    <color name="S800">#1E293B</color>
+    <color name="S900">#0F172A</color>
+    <color name="S950">#020617</color>
+    <color name="S980">#000102</color>
+    <color name="text_primary">@color/S800</color>
+    <color name="text_secondary">@color/S500</color>
+    <color name="shimmer_gray">#666666</color>
+    <color name="main_primary_color">#007AFF</color>
+    <color name="disable_color">#A3A4A6</color>
+    <color name="disable_opt3_color">#919CA6</color>
+    <color name="color_33">#333333</color>
+    <color name="color_semantic">#272643</color>
+    <color name="clr_background">@color/S900</color>
 </resources>

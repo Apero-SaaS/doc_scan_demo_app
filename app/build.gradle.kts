@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -87,6 +89,7 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
     implementation("org.tensorflow:tensorflow-lite:2.13.0")
     implementation(platform("androidx.compose:compose-bom:2024.06.00"))
-
     testImplementation("junit:junit:4.13.2")
+    implementation ("androidx.tracing:tracing:1.1.0")
+    implementation ("androidx.tracing:tracing-ktx:1.1.0")
 }
