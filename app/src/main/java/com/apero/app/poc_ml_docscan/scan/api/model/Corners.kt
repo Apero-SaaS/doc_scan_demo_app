@@ -1,4 +1,4 @@
-package com.apero.core.scan.model
+package com.apero.app.poc_ml_docscan.scan.api.model
 
 import com.apero.app.poc_ml_docscan.scan.common.model.Corners
 

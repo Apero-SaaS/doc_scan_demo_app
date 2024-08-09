@@ -1,4 +1,4 @@
-package com.apero.core.scan.util
+package com.apero.app.poc_ml_docscan.scan.impl.util
 
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
 import com.apero.core.scan.model.Point2F

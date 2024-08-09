@@ -1,13 +1,11 @@
-package com.apero.core.scan
+package com.apero.app.poc_ml_docscan.scan.impl
 
 import android.annotation.SuppressLint
 import android.util.Log
 import arrow.core.Either
 import arrow.core.toNonEmptyListOrNull
-import com.apero.core.scan.model.Corners
-import com.apero.core.scan.util.toPoint2F
-import com.apero.core.scan.util.toSize
-import org.koin.core.annotation.Factory
+import com.apero.app.poc_ml_docscan.scan.api.model.Corners
+import com.apero.app.poc_ml_docscan.scan.impl.util.toPoint2F
 import org.koin.core.annotation.Single
 import org.opencv.core.CvType
 import org.opencv.core.Mat

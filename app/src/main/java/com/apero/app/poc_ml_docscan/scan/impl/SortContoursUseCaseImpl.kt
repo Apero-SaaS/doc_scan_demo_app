@@ -1,9 +1,10 @@
-package com.apero.core.scan
+package com.apero.app.poc_ml_docscan.scan.impl
 
 import arrow.core.toNonEmptyListOrNull
+import com.apero.app.poc_ml_docscan.scan.api.SortContoursUseCase
 import com.apero.app.poc_ml_docscan.scan.common.model.Offset
-import com.apero.core.scan.model.Corners
-import com.apero.core.scan.util.OpenCvHelper
+import com.apero.app.poc_ml_docscan.scan.api.model.Corners
+import com.apero.app.poc_ml_docscan.scan.impl.util.OpenCvHelper
 import org.opencv.core.MatOfPoint
 import org.opencv.core.Point
 import org.opencv.imgproc.Imgproc

@@ -11,13 +11,28 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.util.trace
+import org.koin.android.ext.android.inject
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import arrow.atomic.AtomicInt
+import arrow.core.getOrElse
 import com.apero.app.poc_ml_docscan.databinding.ActivityHomeBinding
+import com.apero.app.poc_ml_docscan.home.model.InferResult
+import com.apero.app.poc_ml_docscan.home.model.toComposeSize
 import com.apero.app.poc_ml_docscan.permission.manager.impl.SinglePermissionWithSystemManager
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionNextAction
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionQueue
+import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import timber.log.Timber
+import java.util.concurrent.Executors
+
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -30,7 +45,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private var analysisImageProxy: ImageProxy? = null
-//    private val documentSegmentationUseCase by inject<FindPaperSheetContoursRealtimeUseCase>()
+    private val documentSegmentationUseCase by inject<FindPaperSheetContoursRealtimeUseCase>()
     private var sensorRotation = 90
     val cameraController: LifecycleCameraController by lazy {
         LifecycleCameraController(this).apply {
@@ -50,7 +65,9 @@ class HomeActivity : AppCompatActivity() {
         viewModel.updateSensorRotation(cameraController)
         bindCameraWithLifecycle()
         setupWithPreview()
+        handleObserver()
     }
+
     private fun setupWithPreview() {
         binding.previewView.scaleType = PreviewView.ScaleType.FILL_CENTER
         binding.previewView.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
@@ -66,42 +83,49 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         })
-//        cameraController.setupImageAnalyzer { imageProxy, index ->
-//            val bitmap = imageProxy.toBitmap()
-//            val originalSize = Size(
-//                imageProxy.width.toFloat(),
-//                imageProxy.height.toFloat()
-//            )
-//            documentSegmentationUseCase(bitmap, sensorRotation, false)
-//                .map {
-//                    val (corners, inferTime, findContoursTime, debugMask) = it
-//                    Timber.d("inferTime: $inferTime, findContoursTime: $findContoursTime, corners: $corners, debugMask: $debugMask")
-//                    InferResult(
-//                        corners = it.corners,
-//                        bitmap = it.debugMask,
-//                        originalSize = originalSize,
-//                        rotationDegree = sensorRotation,
-//                        outputSize = it.outputSize.toComposeSize(),
-//                        index = index,
-//                    )
-//                }
-//                .onLeft {
-//                    Timber.e(it, "ImageAnalysisAnalyzerEffect")
-//                }
-//                .getOrElse {
-//                    InferResult(
-//                        corners = null,
-//                        bitmap = null,
-//                        originalSize = originalSize,
-//                        rotationDegree = sensorRotation,
-//                        outputSize = Size.Zero,
-//                        index = index,
-//                    )
-//                }.let {
-//                    Timber.d("InferResult: $it")
-//                    scanViewModel.updateInferResult(it)
-//                }
-//        }
+        cameraController.setupImageAnalyzer { imageProxy, index ->
+            val bitmap = imageProxy.toBitmap()
+            val originalSize = Size(
+                imageProxy.width.toFloat(),
+                imageProxy.height.toFloat()
+            )
+            Timber.d("TAG-PT: $bitmap")
+            documentSegmentationUseCase(bitmap, sensorRotation, false)
+                .map {
+                    val (corners, inferTime, findContoursTime, debugMask) = it
+                    Timber.d("inferTime: $inferTime, findContoursTime: $findContoursTime, corners: $corners, debugMask: $debugMask")
+                    InferResult(
+                        corners = it.corners,
+                        bitmap = it.debugMask,
+                        originalSize = originalSize,
+                        rotationDegree = sensorRotation,
+                        outputSize = it.outputSize.toComposeSize(),
+                        index = index,
+                    )
+                }
+                .onLeft {
+                    Timber.e(it, "ImageAnalysisAnalyzerEffect")
+                }
+                .getOrElse {
+                    InferResult(
+                        corners = null,
+                        bitmap = null,
+                        originalSize = originalSize,
+                        rotationDegree = sensorRotation,
+                        outputSize = Size.Zero,
+                        index = index,
+                    )
+                }.let {
+                    Timber.d("InferResult: $it")
+                    viewModel.updateInferResult(it)
+                }
+        }
+    }
+
+    private fun handleObserver() {
+        viewModel.sensorRotationDegrees.onEach {
+            sensorRotation = it
+        }.launchIn(lifecycleScope)
     }
 
     private fun requestCameraPermission() {
@@ -118,6 +142,30 @@ class HomeActivity : AppCompatActivity() {
                         //TODO: back to home
                     }
                 }
+        }
+    }
+
+    private fun CameraController.setupImageAnalyzer(
+        poolSize: Int = 4,
+        analyze: suspend (ImageProxy, index: Int) -> Unit,
+    ) {
+        lifecycleScope.launch {
+            val executor = Executors.newScheduledThreadPool(poolSize)
+            val index = AtomicInt(0)
+            setImageAnalysisAnalyzer(executor) { imageProxy ->
+                val cachedToBitmapImageProxy = object : ImageProxy by imageProxy {
+                    private val bitmap by lazy { imageProxy.toBitmap() }
+                    override fun toBitmap() = bitmap
+                }
+                runBlocking {
+                    trace("CameraControllerState\$ImageAnalysisAnalyzerEffect") {
+                        analyze(cachedToBitmapImageProxy, index.getAndIncrement())
+                    }
+                    // very important!! If missing ImageAnalysisUseCase will not provide new ImageProxy
+                    analysisImageProxy = cachedToBitmapImageProxy
+                    imageProxy.close()
+                }
+            }
         }
     }
 }

@@ -1,40 +1,38 @@
-package com.apero.core.scan.di
+package com.apero.app.poc_ml_docscan.scan.impl.di
 
 import android.content.Context
-import com.apero.core.coroutine.di.CoreCoroutineModule
-import com.apero.core.scan.ComputeContourAreaUseCase
-import com.apero.core.scan.FindPaperSheetContoursRealtimeUseCaseImpl
-import com.apero.core.scan.FindPaperSheetContoursRealtimeUseCase
-import com.apero.core.scan.FindPaperSheetContoursUseCase
-import com.apero.core.scan.SortContoursUseCase
-import com.apero.core.scan.SortContoursUseCaseImpl
-import com.apero.core.scan.StableFindPaperSheetContoursUseCaseImpl
+import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
+import com.apero.app.poc_ml_docscan.scan.api.SortContoursUseCase
+
+import com.apero.app.poc_ml_docscan.scan.impl.ComputeContourAreaUseCase
+import com.apero.app.poc_ml_docscan.scan.impl.FindPaperSheetContoursRealtimeUseCaseImpl
+import com.apero.app.poc_ml_docscan.scan.impl.FindPaperSheetContoursUseCase
+import com.apero.app.poc_ml_docscan.scan.impl.StableFindPaperSheetContoursUseCaseImpl
 import com.apero.app.poc_ml_docscan.scan.common.util.AnalyticsReporter
+import com.apero.app.poc_ml_docscan.scan.impl.SortContoursUseCaseImpl
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Factory
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
-@Module(
-    includes = [
-        CoreCoroutineModule::class,
-    ]
-)
-@ComponentScan("com.apero.core.scan")
+@Module
+@ComponentScan("com.apero.app.poc_ml_docscan")
 public class CoreScanModule {
     /**
      * Cannot use [@Single][Single] in DocumentSegmentationUseCaseImpl,
      * see [Issue link](https://github.com/InsertKoinIO/koin/issues/1742)
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Single
     internal fun provideFindPaperSheetContoursRealtimeUseCase(
         context: Context,
         findPaperSheetContoursUseCase: FindPaperSheetContoursUseCase,
-        @Named(CoreCoroutineModule.DEFAULT)
-        defaultDispatcher: CoroutineDispatcher,
+        defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
         computeContourAreaUseCase: ComputeContourAreaUseCase,
         sortContoursUseCase: SortContoursUseCase,
         scope: CoroutineScope,

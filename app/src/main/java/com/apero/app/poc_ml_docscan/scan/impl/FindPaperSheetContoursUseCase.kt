@@ -1,7 +1,7 @@
-package com.apero.core.scan
+package com.apero.app.poc_ml_docscan.scan.impl
 
 import arrow.core.Either
-import com.apero.core.scan.model.Corners
+import com.apero.app.poc_ml_docscan.scan.api.model.Corners
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 
 internal interface FindPaperSheetContoursUseCase {

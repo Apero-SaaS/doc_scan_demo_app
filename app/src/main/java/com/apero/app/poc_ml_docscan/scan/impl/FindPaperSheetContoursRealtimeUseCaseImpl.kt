@@ -1,4 +1,4 @@
-package com.apero.core.scan
+package com.apero.app.poc_ml_docscan.scan.impl
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,8 +6,9 @@ import androidx.annotation.MainThread
 import androidx.collection.LruCache
 import arrow.core.Either
 import arrow.core.raise.either
+import com.apero.app.poc_ml_docscan.ml.DocSeg
+import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
-import com.apero.core.scan.ml.DocSeg
 import com.apero.core.scan.model.SensorRotationDegrees
 import com.apero.app.poc_ml_docscan.scan.common.util.AnalyticsReporter
 import com.apero.app.poc_ml_docscan.scan.common.util.traceAsync
@@ -192,8 +193,7 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
     }
 
     private fun getInputImageProcessor(rotationDegrees: SensorRotationDegrees): ImageProcessor =
-        inputImageProcessorCache
-            .get(rotationDegrees)
+        inputImageProcessorCache[rotationDegrees]
             ?: ImageProcessor.Builder()
                 .add(Rot90Op(-rotationDegrees / 90))
                 .build()

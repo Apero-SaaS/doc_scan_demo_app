@@ -1,6 +1,6 @@
-package com.apero.core.scan
+package com.apero.app.poc_ml_docscan.scan.impl
 
-import com.apero.core.scan.model.Corners
+import com.apero.app.poc_ml_docscan.scan.api.model.Corners
 import org.koin.core.annotation.Factory
 import org.opencv.core.MatOfPoint2f
 import org.opencv.core.Point

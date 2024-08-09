@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "POC-ML-Docscan"
 include(":app")
+include(":opencv")

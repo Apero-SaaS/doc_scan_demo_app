@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import arrow.core.Either
 import com.apero.app.poc_ml_docscan.scan.common.model.Offset
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
-import com.apero.core.scan.model.Corners
+import com.apero.app.poc_ml_docscan.scan.api.model.Corners
 import com.apero.core.scan.model.Point2F
 import com.apero.core.scan.model.SensorRotationDegrees
 import kotlinx.coroutines.flow.StateFlow
