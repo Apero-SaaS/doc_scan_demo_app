@@ -19,16 +19,20 @@
         android:theme="@style/Theme.POCMLDocscan"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".home.HomeActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.POCMLDocscan">
+            android:theme="@style/Theme.BaseApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.POCMLDocscan"></activity>
     </application>
 
 </manifest>
