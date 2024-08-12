@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CropModeView">
+        <attr name="crop_mode_icon" format="reference|color" />
+        <attr name="crop_mode_label" format="string" />
+        <attr name="crop_mode_checked" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="ToolbarEditView">
+        <attr name="toolbar_edit_icon" format="reference|color" />
+        <attr name="toolbar_edit_label" format="string" />
+        <attr name="toolbar_edit_checked" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="CropImageView">
+        <attr name="civMaskAlpha" format="integer"/>
+        <attr name="civShowGuideLine" format="boolean"/>
+        <attr name="civLineColor" format="color"/>
+        <attr name="civLineWidth" format="dimension"/>
+        <attr name="civShowMagnifier" format="boolean"/>
+        <attr name="civMagnifierCrossColor" format="color"/>
+        <attr name="civGuideLineWidth" format="dimension"/>
+        <attr name="civGuideLineColor" format="color"/>
+        <attr name="civPointFillColor" format="color"/>
+        <attr name="civPointFillAlpha" format="integer"/>
+        <attr name="civPointColor" format="color"/>
+        <attr name="civPointWidth" format="dimension"/>
+        <attr name="civShowEdgeMidPoint" format="boolean"/>
+        <attr name="civShowCropPoint" format="boolean"/>
+    </declare-styleable>
+</resources>

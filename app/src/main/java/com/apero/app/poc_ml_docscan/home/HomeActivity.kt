@@ -21,6 +21,7 @@ import arrow.atomic.AtomicInt
 import arrow.core.getOrElse
 import coil.load
 import com.apero.app.poc_ml_docscan.databinding.ActivityHomeBinding
+import com.apero.app.poc_ml_docscan.edit.EditActivity
 import com.apero.app.poc_ml_docscan.home.model.InferResult
 import com.apero.app.poc_ml_docscan.home.model.toComposeSize
 import com.apero.app.poc_ml_docscan.permission.manager.impl.SinglePermissionWithSystemManager
@@ -54,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
     private val documentSegmentationUseCase: FindPaperSheetContoursRealtimeUseCase by lazy {
         DocSegImpl.providerFindPaperSheetContoursRealtimeUseCase(this)
     }
-    private var sensorRotation = 90
+    private var sensorRotation = 0
     val cameraController: LifecycleCameraController by lazy {
         LifecycleCameraController(this).apply {
             this.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -177,6 +178,9 @@ class HomeActivity : AppCompatActivity() {
     private fun handleClick() {
         binding.ivCapture.setOnSuspendClickListener {
             captureImage()
+        }
+        binding.ivCollectionCaptured.setOnClickListener {
+            EditActivity.start(this, viewModel.uiState.value.capturedImage)
         }
     }
 
