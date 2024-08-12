@@ -20,7 +20,6 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Named
 import org.koin.core.annotation.Single
 
-@Module
 @ComponentScan("com.apero.app.poc_ml_docscan")
 public class CoreScanModule {
     /**
@@ -40,7 +39,7 @@ public class CoreScanModule {
     ): FindPaperSheetContoursRealtimeUseCase {
         val limitParallelism = defaultDispatcher.limitedParallelism(1)
         val delegate = FindPaperSheetContoursRealtimeUseCaseImpl(
-            context, findPaperSheetContoursUseCase, limitParallelism, analyticsReporter, scope
+            context, findPaperSheetContoursUseCase, limitParallelism, scope
         )
         return StableFindPaperSheetContoursUseCaseImpl(
             delegate = delegate,
@@ -48,7 +47,6 @@ public class CoreScanModule {
             sortContoursUseCase = sortContoursUseCase,
             coveragePercentageThreshold = 0.1f,
             dispatcher = defaultDispatcher,
-            analyticsReporter = analyticsReporter,
         )
     }
 

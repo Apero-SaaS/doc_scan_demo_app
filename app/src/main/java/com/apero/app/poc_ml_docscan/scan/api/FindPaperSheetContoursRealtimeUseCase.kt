@@ -5,14 +5,14 @@ import arrow.core.Either
 import com.apero.app.poc_ml_docscan.scan.common.model.Offset
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
 import com.apero.app.poc_ml_docscan.scan.api.model.Corners
-import com.apero.core.scan.model.Point2F
-import com.apero.core.scan.model.SensorRotationDegrees
+import com.apero.app.poc_ml_docscan.scan.api.model.Point2F
+import com.apero.app.poc_ml_docscan.scan.api.model.SensorRotationDegrees
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration
 
-public interface FindPaperSheetContoursRealtimeUseCase {
+interface FindPaperSheetContoursRealtimeUseCase {
 
-    public data class Contours(
+    data class Contours(
         val corners: Corners?,
         val inferTime: Duration,
         val findContoursTime: Duration,
@@ -23,19 +23,19 @@ public interface FindPaperSheetContoursRealtimeUseCase {
         val outputSize: Size,
     )
 
-    public val modelReady: StateFlow<Boolean>
+    val modelReady: StateFlow<Boolean>
 
     /**
      * @param debug if true, this will return [Contours] with debug [Contours.debugMask]
      */
-    public suspend operator fun invoke(
+    suspend operator fun invoke(
         bitmap: Bitmap,
         degrees: SensorRotationDegrees,
         debug: Boolean = false,
     ): Either<Exception, Contours>
 }
 
-public fun FindPaperSheetContoursRealtimeUseCase.Contours.normalizeToSize(
+fun FindPaperSheetContoursRealtimeUseCase.Contours.normalizeToSize(
     originalSize: Size,
 ): FindPaperSheetContoursRealtimeUseCase.Contours {
     val contourSize = outputSize

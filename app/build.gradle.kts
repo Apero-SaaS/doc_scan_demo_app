@@ -64,7 +64,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-tflite-impl:16.1.0")
     implementation("com.google.android.gms:play-services-tflite-java:16.1.0")
     implementation(project(":opencv"))
-    val cameraxVersion = "1.3.4"
+    val cameraxVersion = "1.4.0-beta01"
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -77,6 +77,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -98,7 +99,7 @@ dependencies {
     implementation("androidx.tracing:tracing-ktx:1.1.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.0")
     implementation(platform("io.insert-koin:koin-bom:3.5.3"))
     implementation("io.insert-koin:koin-core")
     implementation("io.insert-koin:koin-core-coroutines")

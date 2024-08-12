@@ -8,4 +8,4 @@ import com.apero.app.poc_ml_docscan.scan.common.model.Corners
     """,
     ReplaceWith("com.apero.app.poc_ml_docscan.scan.common.model.Corners")
 )
-public typealias Corners = Corners
+typealias Corners = Corners

@@ -12,7 +12,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.util.trace
-import org.koin.android.ext.android.inject
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -26,7 +26,10 @@ import com.apero.app.poc_ml_docscan.permission.manager.impl.SinglePermissionWith
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionNextAction
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionQueue
 import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
+import com.apero.app.poc_ml_docscan.scan.impl.DocSegImpl
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -41,11 +44,13 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        updateUI(savedInstanceState)
+        updateUI()
     }
 
     private var analysisImageProxy: ImageProxy? = null
-    private val documentSegmentationUseCase by inject<FindPaperSheetContoursRealtimeUseCase>()
+    private val documentSegmentationUseCase: FindPaperSheetContoursRealtimeUseCase by lazy {
+        DocSegImpl.providerFindPaperSheetContoursRealtimeUseCase(this)
+    }
     private var sensorRotation = 90
     val cameraController: LifecycleCameraController by lazy {
         LifecycleCameraController(this).apply {
@@ -60,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
             Manifest.permission.CAMERA
         )
 
-    private fun updateUI(savedInstanceState: Bundle?) {
+    private fun updateUI() {
         requestCameraPermission()
         viewModel.updateSensorRotation(cameraController)
         bindCameraWithLifecycle()
@@ -90,7 +95,7 @@ class HomeActivity : AppCompatActivity() {
                 imageProxy.height.toFloat()
             )
             Timber.d("TAG-PT: $bitmap")
-            documentSegmentationUseCase(bitmap, sensorRotation, false)
+            documentSegmentationUseCase.invoke(bitmap, sensorRotation, false)
                 .map {
                     val (corners, inferTime, findContoursTime, debugMask) = it
                     Timber.d("inferTime: $inferTime, findContoursTime: $findContoursTime, corners: $corners, debugMask: $debugMask")
@@ -126,6 +131,12 @@ class HomeActivity : AppCompatActivity() {
         viewModel.sensorRotationDegrees.onEach {
             sensorRotation = it
         }.launchIn(lifecycleScope)
+        viewModel.inferResult
+            .map { it }
+            .distinctUntilChanged()
+            .onEach {
+                binding.viewOverlay.setInferResult(it)
+            }.launchIn(lifecycleScope)
     }
 
     private fun requestCameraPermission() {

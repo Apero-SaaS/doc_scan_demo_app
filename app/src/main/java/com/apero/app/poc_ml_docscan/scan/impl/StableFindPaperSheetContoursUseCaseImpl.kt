@@ -7,10 +7,11 @@ import arrow.core.raise.either
 import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
 import com.apero.app.poc_ml_docscan.scan.api.SortContoursUseCase
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
-import com.apero.core.scan.model.SensorRotationDegrees
+import com.apero.app.poc_ml_docscan.scan.api.model.SensorRotationDegrees
 import com.apero.app.poc_ml_docscan.scan.common.util.AnalyticsReporter
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.time.measureTimedValue
 
 internal class StableFindPaperSheetContoursUseCaseImpl(
@@ -20,7 +21,6 @@ internal class StableFindPaperSheetContoursUseCaseImpl(
     @FloatRange(from = 0.0, to = 1.0)
     private val coveragePercentageThreshold: Float,
     private val dispatcher: CoroutineDispatcher,
-    private val analyticsReporter: AnalyticsReporter,
 ) : FindPaperSheetContoursRealtimeUseCase by delegate {
 
     override suspend fun invoke(
@@ -34,12 +34,6 @@ internal class StableFindPaperSheetContoursUseCaseImpl(
             .also {
                 val (value, duration) = it
                 val rightValue = value.getOrNull() ?: return@also
-                analyticsReporter.reportEvent(
-                    "time_model",
-                    "tflite_infer_ms" to "${rightValue.inferTime.inWholeMilliseconds}",
-                    "opencv_find_coutour_ms" to "${rightValue.findContoursTime.inWholeMilliseconds}",
-                    "total_ms" to "${duration.inWholeMilliseconds}",
-                )
             }
             .value
     }
@@ -50,6 +44,7 @@ internal class StableFindPaperSheetContoursUseCaseImpl(
         debug: Boolean,
     ): Either<Exception, FindPaperSheetContoursRealtimeUseCase.Contours> = either {
         var result = delegate(bitmap, degrees, debug).bind()
+        Timber.d("TAG-PT: $result")
         if (result.corners == null) return@either result
         result = result.copy(corners = sortContoursUseCase.invoke(result.corners!!))
 

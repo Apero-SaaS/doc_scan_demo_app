@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Size
 import com.apero.app.poc_ml_docscan.scan.api.model.Corners
-import com.apero.core.scan.model.SensorRotationDegrees
+import com.apero.app.poc_ml_docscan.scan.api.model.SensorRotationDegrees
 
 @Immutable
 data class InferResult(

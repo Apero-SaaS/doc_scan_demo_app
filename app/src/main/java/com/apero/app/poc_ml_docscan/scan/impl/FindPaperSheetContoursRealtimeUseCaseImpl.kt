@@ -2,15 +2,15 @@ package com.apero.app.poc_ml_docscan.scan.impl
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.nfc.Tag
 import androidx.annotation.MainThread
 import androidx.collection.LruCache
 import arrow.core.Either
 import arrow.core.raise.either
 import com.apero.app.poc_ml_docscan.ml.DocSeg
 import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
+import com.apero.app.poc_ml_docscan.scan.api.model.SensorRotationDegrees
 import com.apero.app.poc_ml_docscan.scan.common.model.Size
-import com.apero.core.scan.model.SensorRotationDegrees
-import com.apero.app.poc_ml_docscan.scan.common.util.AnalyticsReporter
 import com.apero.app.poc_ml_docscan.scan.common.util.traceAsync
 import com.google.android.gms.dynamite.DynamiteModule
 import com.google.android.gms.tflite.client.TfLiteInitializationOptions
@@ -48,9 +48,11 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
     private val context: Context,
     private val findPaperSheetContoursUseCase: FindPaperSheetContoursUseCase,
     private val dispatcher: CoroutineDispatcher,
-    private val analyticsReporter: AnalyticsReporter,
     scope: CoroutineScope,
 ) : FindPaperSheetContoursRealtimeUseCase {
+    companion object {
+        private const val TAG = "FindPaperSheetContoursRealtimeUseCaseImpl"
+    }
 
     private val initialedInstant = TimeSource.Monotonic.markNow()
 
@@ -96,10 +98,6 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
             )
                 .also {
                     Timber.d("Created DocSegModel")
-                    analyticsReporter.reportEvent(
-                        "time_start_model",
-                        "duration_ms" to initialedInstant.elapsedNow().inWholeMilliseconds.toString(),
-                    )
                     _modelReady.value = true
                 }
         }
@@ -118,6 +116,7 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
         degrees: SensorRotationDegrees,
         debug: Boolean,
     ): Either<Exception, FindPaperSheetContoursRealtimeUseCase.Contours> = withContext(dispatcher) {
+        Timber.tag(TAG).d("invoke of $TAG is working")
         compute(bitmap, degrees, debug)
     }
 
@@ -134,12 +133,10 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
             }
 
             val normalizedBuffer = normalizeOutput(inferResult)
-
             val debugBitmap = if (debug) getDebugMask(normalizedBuffer) else null
-            Timber.d("debugBitmap $debugBitmap")
             val (contourResult, findContoursTime) = measureTimedValue {
                 /* TODO 23/12/2023 try switch to inferResult */
-                findPaperSheetContoursUseCase(normalizedBuffer)
+                findPaperSheetContoursUseCase.invoke(normalizedBuffer)
                     .bind()
             }
 
@@ -153,7 +150,7 @@ internal class FindPaperSheetContoursRealtimeUseCaseImpl(
                     normalizedBuffer.shape[2].toFloat(),
                 )
             )
-
+            Timber.tag(TAG).d("$result")
             result
         }
     }

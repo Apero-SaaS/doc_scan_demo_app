@@ -1,3 +1,3 @@
-package com.apero.core.scan.model
+package com.apero.app.poc_ml_docscan.scan.api.model
 
-public typealias SensorRotationDegrees = Int
+typealias SensorRotationDegrees = Int
