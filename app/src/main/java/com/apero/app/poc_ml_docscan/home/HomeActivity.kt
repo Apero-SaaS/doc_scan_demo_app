@@ -2,6 +2,7 @@ package com.apero.app.poc_ml_docscan.home
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
@@ -12,13 +13,13 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.util.trace
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import arrow.atomic.AtomicInt
 import arrow.core.getOrElse
+import coil.load
 import com.apero.app.poc_ml_docscan.databinding.ActivityHomeBinding
 import com.apero.app.poc_ml_docscan.home.model.InferResult
 import com.apero.app.poc_ml_docscan.home.model.toComposeSize
@@ -26,7 +27,9 @@ import com.apero.app.poc_ml_docscan.permission.manager.impl.SinglePermissionWith
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionNextAction
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionQueue
 import com.apero.app.poc_ml_docscan.scan.api.FindPaperSheetContoursRealtimeUseCase
+import com.apero.app.poc_ml_docscan.scan.common.model.file
 import com.apero.app.poc_ml_docscan.scan.impl.DocSegImpl
+import com.apero.app.poc_ml_docscan.utils.RotateTransformation
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -71,6 +74,7 @@ class HomeActivity : AppCompatActivity() {
         bindCameraWithLifecycle()
         setupWithPreview()
         handleObserver()
+        handleClick()
     }
 
     private fun setupWithPreview() {
@@ -94,7 +98,6 @@ class HomeActivity : AppCompatActivity() {
                 imageProxy.width.toFloat(),
                 imageProxy.height.toFloat()
             )
-            Timber.d("TAG-PT: $bitmap")
             documentSegmentationUseCase.invoke(bitmap, sensorRotation, false)
                 .map {
                     val (corners, inferTime, findContoursTime, debugMask) = it
@@ -128,15 +131,30 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun handleObserver() {
-        viewModel.sensorRotationDegrees.onEach {
-            sensorRotation = it
-        }.launchIn(lifecycleScope)
+        viewModel.cameraState
+            .map { it.sensorRotationDegrees }
+            .onEach {
+                sensorRotation = it
+            }.launchIn(lifecycleScope)
+
         viewModel.inferResult
             .map { it }
             .distinctUntilChanged()
             .onEach {
                 binding.viewOverlay.setInferResult(it)
             }.launchIn(lifecycleScope)
+
+        viewModel.uiState.map {
+            it.capturedImage.firstOrNull { internalImage ->
+                internalImage.file.exists() && internalImage.file.length() > 0
+            }
+        }.onEach {
+            binding.ivCollectionCaptured.load(it?.file) {
+                size(48, 48)
+                crossfade(true)
+                transformations(RotateTransformation(sensorRotation.toFloat()))
+            }
+        }.launchIn(lifecycleScope)
     }
 
     private fun requestCameraPermission() {
@@ -153,6 +171,26 @@ class HomeActivity : AppCompatActivity() {
                         //TODO: back to home
                     }
                 }
+        }
+    }
+
+    private fun handleClick() {
+        binding.ivCapture.setOnSuspendClickListener {
+            captureImage()
+        }
+    }
+
+    private suspend fun captureImage() {
+        viewModel.captureImage(cameraController, analysisImageProxy)
+    }
+
+    private fun View.setOnSuspendClickListener(block: suspend () -> Unit) {
+        setOnClickListener {
+            isEnabled = false
+            lifecycleScope.launch {
+                block()
+                isEnabled = true
+            }
         }
     }
 

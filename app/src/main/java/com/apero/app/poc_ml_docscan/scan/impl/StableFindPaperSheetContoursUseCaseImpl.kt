@@ -44,7 +44,6 @@ internal class StableFindPaperSheetContoursUseCaseImpl(
         debug: Boolean,
     ): Either<Exception, FindPaperSheetContoursRealtimeUseCase.Contours> = either {
         var result = delegate(bitmap, degrees, debug).bind()
-        Timber.d("TAG-PT: $result")
         if (result.corners == null) return@either result
         result = result.copy(corners = sortContoursUseCase.invoke(result.corners!!))
 

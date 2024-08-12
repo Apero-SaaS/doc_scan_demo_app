@@ -105,4 +105,5 @@ dependencies {
     implementation("io.insert-koin:koin-core-coroutines")
     implementation("io.insert-koin:koin-android")
     implementation("io.insert-koin:koin-annotations:1.3.0")
+    implementation("io.coil-kt:coil:2.6.0")
 }
