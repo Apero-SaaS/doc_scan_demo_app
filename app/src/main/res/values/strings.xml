@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">POC-ML-Docscan</string>
+    <string name="text_retake">Retake</string>
+    <string name="text_rotate">Rotate</string>
+    <string name="text_delete">Delete</string>
+    <string name="text_arrange">Arrange</string>
+    <string name="text_sign">Sign</string>
+    <string name="text_to_text">To Text</string>
+    <string name="text_watermark">Watermark</string>
+    <string name="text_filter">Filter</string>
+    <string name="text_adjust">Adjust</string>
+    <string name="text_crop">Crop</string>
+    <string name="text_copy">Copy</string>
 </resources>

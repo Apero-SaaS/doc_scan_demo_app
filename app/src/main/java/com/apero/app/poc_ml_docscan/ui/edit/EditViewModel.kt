@@ -10,6 +10,8 @@ import com.apero.app.poc_ml_docscan.image_processing.model.ResizeTransformation
 import com.apero.app.poc_ml_docscan.model.PdfPageId
 import com.apero.app.poc_ml_docscan.scan.common.model.InternalImage
 import com.apero.app.poc_ml_docscan.scan.common.model.rotation
+import com.apero.app.poc_ml_docscan.ui.edit.model.EditToolType
+import com.apero.app.poc_ml_docscan.ui.edit.model.FilterUiModel
 import com.apero.app.poc_ml_docscan.utils.RotateTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,19 +19,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import timber.log.Timber
 
-class EditViewModel:ViewModel() {
+class EditViewModel : ViewModel() {
     private val _editUiState =
         MutableStateFlow(DocumentEditUiState())
     val editUiState = _editUiState.asStateFlow()
-    init {
+
+//    init {
 //        val currentPagePreviewState = editUiState.map { it.pagePreview }
 //            .filterNotNull()
 //            .distinctUntilChangedBy { Pair(it.pageId, it.internalImage) }
@@ -58,7 +65,7 @@ class EditViewModel:ViewModel() {
 //            }
 //            .onEach { (pagePreview, currentFilter) ->
 //                Timber.d("updateImageFromFilter: pagePreview\$filterSelected: ${pagePreview.filterSelected},currentFilter:${currentFilter}")
-////                updateImageFromFilter(pagePreview, currentFilter.filterMode)
+//                updateImageFromFilter(pagePreview, currentFilter.filterMode)
 //            }.launchIn(viewModelScope)
 //
 //        combine(
@@ -72,9 +79,10 @@ class EditViewModel:ViewModel() {
 //            .distinctUntilChangedBy { pagePreview -> pagePreview.pageId to pagePreview.internalImage }
 //            .onEach { pagePreview ->
 //                Timber.d("updateFilterListFromPage: pagePreview\$filterSelected:${pagePreview.filterSelected}")
-////                updateFilterListFromPage(pagePreview)
+//                updateFilterListFromPage(pagePreview)
 //            }.launchIn(viewModelScope)
-    }
+//    }
+
     fun fillPagePreview(pages: List<InternalImage>) {
         val listPagePreview = pages.mapIndexed { index, internalImage ->
             PagePreviewUiModel(
@@ -105,14 +113,15 @@ class EditViewModel:ViewModel() {
     fun updateCurrentPage(position: Int) {
         _editUiState.update { it.updatePage(position) }
     }
-//    fun updateFilter(filter: FilterUiModel) {
-//        _editUiState.update { state -> state.updateFilter(filter) }
-//    }
-//
-//    fun toggleFilterApplyForAll() {
-//        _editUiState.update { it.applyForAllFilter(it.isApplyFilterForAll.not()) }
-//    }
-//
+
+    fun updateFilter(filter: FilterUiModel) {
+        _editUiState.update { state -> state.updateFilter(filter) }
+    }
+
+    fun toggleFilterApplyForAll() {
+        _editUiState.update { it.applyForAllFilter(it.isApplyFilterForAll.not()) }
+    }
+
 //    private var jobUploadFilterListFromPage: Job? = null
 //    private fun updateFilterListFromPage(pagePreview: PagePreviewUiModel) {
 //        jobUploadFilterListFromPage?.cancel()
@@ -192,32 +201,33 @@ class EditViewModel:ViewModel() {
 //        }
 //    }
 
-//    private fun PagePreviewUiModel.generateListFilter(): List<FilterUiModel> {
-//        return FilterMode.entries.map {
-//            FilterUiModel(
-//                filterMode = it,
-//                imagePreview = internalImage,
-//                pageId = pageId,
-//                isChecked = filterSelected == it
-//            )
-//        }
-//    }
-//
-//    fun toggleUpdateToolType(toolType: EditToolType) {
-//        _editUiState.updateAndGet {
-//            it.copy(currentToolType = if (it.currentToolType == toolType) null else toolType)
-//        }
-//    }
+    private fun PagePreviewUiModel.generateListFilter(): List<FilterUiModel> {
+        return FilterMode.entries.map {
+            FilterUiModel(
+                filterMode = it,
+                imagePreview = internalImage,
+                pageId = pageId,
+                isChecked = filterSelected == it
+            )
+        }
+    }
+
+    fun toggleUpdateToolType(toolType: EditToolType) {
+        _editUiState.updateAndGet {
+            it.copy(currentToolType = if (it.currentToolType == toolType) null else toolType)
+        }
+    }
 
     fun toggleRotate() {
         _editUiState.update { it.toggleRotate() }
     }
 }
+
 data class DocumentEditUiState(
     val listPagePreview: List<PagePreviewUiModel> = emptyList(),
     val currentPageIndex: Int = -1,
-//    val listFilterPreview: List<FilterUiModel> = emptyList(),
-//    val currentToolType: EditToolType? = null,
+    val listFilterPreview: List<FilterUiModel> = emptyList(),
+    val currentToolType: EditToolType? = null,
     val isApplyFilterForAll: Boolean = false,
 ) {
     val isEnablePrevPage: Boolean get() = currentPageIndex > 0
@@ -237,28 +247,28 @@ data class DocumentEditUiState(
         return copy(currentPageIndex = currentPagePreview)
     }
 
-//    fun updateFilter(filter: FilterUiModel): DocumentEditUiState {
-//        val state = this
-//        return state.copy(listFilterPreview = state.listFilterPreview.map {
-//            it.copy(isChecked = it.filterMode == filter.filterMode)
-//        }, listPagePreview = state.listPagePreview.map {
-//            if (it.pageId == filter.pageId) {
-//                it.copy(
-//                    filterSelected = filter.filterMode,
-//                    imagePreview = it.imagePreview ?: filter.imagePreview
-//                )
-//            } else it.copy(filterSelected = if (isApplyFilterForAll) filter.filterMode else it.filterSelected)
-//        })
-//    }
+    fun updateFilter(filter: FilterUiModel): DocumentEditUiState {
+        val state = this
+        return state.copy(listFilterPreview = state.listFilterPreview.map {
+            it.copy(isChecked = it.filterMode == filter.filterMode)
+        }, listPagePreview = state.listPagePreview.map {
+            if (it.pageId == filter.pageId) {
+                it.copy(
+                    filterSelected = filter.filterMode,
+                    imagePreview = it.imagePreview ?: filter.imagePreview
+                )
+            } else it.copy(filterSelected = if (isApplyFilterForAll) filter.filterMode else it.filterSelected)
+        })
+    }
 
-//    fun applyForAllFilter(isApplyForAll: Boolean): DocumentEditUiState {
-//        val currentFilter = listFilterPreview.find { it.isChecked }?.filterMode
-//        return let {
-//            if (isApplyForAll && currentFilter != null) {
-//                copy(listPagePreview = listPagePreview.map { it.copy(filterSelected = currentFilter) })
-//            } else this
-//        }.copy(isApplyFilterForAll = isApplyForAll)
-//    }
+    fun applyForAllFilter(isApplyForAll: Boolean): DocumentEditUiState {
+        val currentFilter = listFilterPreview.find { it.isChecked }?.filterMode
+        return let {
+            if (isApplyForAll && currentFilter != null) {
+                copy(listPagePreview = listPagePreview.map { it.copy(filterSelected = currentFilter) })
+            } else this
+        }.copy(isApplyFilterForAll = isApplyForAll)
+    }
 
     fun toggleRotate(): DocumentEditUiState {
         return copy(listPagePreview = listPagePreview.mapIndexed { index, pagePreview ->
