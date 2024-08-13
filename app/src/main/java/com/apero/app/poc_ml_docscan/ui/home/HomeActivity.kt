@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.home
+package com.apero.app.poc_ml_docscan.ui.home
 
 import android.Manifest
 import android.os.Bundle
@@ -21,9 +21,9 @@ import arrow.atomic.AtomicInt
 import arrow.core.getOrElse
 import coil.load
 import com.apero.app.poc_ml_docscan.databinding.ActivityHomeBinding
-import com.apero.app.poc_ml_docscan.edit.EditActivity
-import com.apero.app.poc_ml_docscan.home.model.InferResult
-import com.apero.app.poc_ml_docscan.home.model.toComposeSize
+import com.apero.app.poc_ml_docscan.ui.edit.EditActivity
+import com.apero.app.poc_ml_docscan.ui.home.model.InferResult
+import com.apero.app.poc_ml_docscan.ui.home.model.toComposeSize
 import com.apero.app.poc_ml_docscan.permission.manager.impl.SinglePermissionWithSystemManager
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionNextAction
 import com.apero.app.poc_ml_docscan.permission.queue.PermissionQueue

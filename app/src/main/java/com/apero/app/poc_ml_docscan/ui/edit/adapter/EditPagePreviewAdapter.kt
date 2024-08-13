@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.edit.adapter
+package com.apero.app.poc_ml_docscan.ui.edit.adapter
 
 import android.graphics.BitmapFactory
 import android.graphics.Point
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.apero.app.poc_ml_docscan.base.BaseViewHolder
 import com.apero.app.poc_ml_docscan.databinding.ItemPagePreviewBinding
-import com.apero.app.poc_ml_docscan.edit.model.PagePreviewUiModel
+import com.apero.app.poc_ml_docscan.ui.edit.model.PagePreviewUiModel
 import com.apero.app.poc_ml_docscan.scan.common.model.androidUri
 import timber.log.Timber
 import java.io.FileNotFoundException

@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.edit
+package com.apero.app.poc_ml_docscan.ui.edit
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.apero.app.poc_ml_docscan.R
 import com.apero.app.poc_ml_docscan.databinding.ActivityEditBinding
-import com.apero.app.poc_ml_docscan.edit.adapter.EditPagePreviewAdapter
+import com.apero.app.poc_ml_docscan.ui.edit.adapter.EditPagePreviewAdapter
 import com.apero.app.poc_ml_docscan.scan.common.model.InternalImage
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map

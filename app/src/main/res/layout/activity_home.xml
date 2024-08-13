@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/clr_background"
     android:orientation="vertical"
-    tools:context=".home.HomeActivity">
+    tools:context=".ui.home.HomeActivity">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.apero.app.poc_ml_docscan.home.custom.OverlayView
+    <com.apero.app.poc_ml_docscan.ui.home.custom.OverlayView
         android:id="@+id/viewOverlay"
         android:layout_width="0dp"
         android:layout_height="0dp"

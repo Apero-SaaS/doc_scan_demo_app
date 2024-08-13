@@ -1,8 +1,8 @@
 package com.apero.app.poc_ml_docscan.repo
 
 import com.apero.app.poc_ml_docscan.repo.sourcer.InternalCapturedImageSource
-import com.apero.app.poc_ml_docscan.home.model.ScanSession
-import com.apero.app.poc_ml_docscan.home.model.SessionId
+import com.apero.app.poc_ml_docscan.ui.home.model.ScanSession
+import com.apero.app.poc_ml_docscan.ui.home.model.SessionId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single

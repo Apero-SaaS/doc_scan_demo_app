@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.edit.model
+package com.apero.app.poc_ml_docscan.ui.edit.model
 
 import com.apero.app.poc_ml_docscan.image_processing.model.FilterTransformation
 

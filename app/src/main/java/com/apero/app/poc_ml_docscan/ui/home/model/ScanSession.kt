@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.home.model
+package com.apero.app.poc_ml_docscan.ui.home.model
 
 import androidx.compose.runtime.Immutable
 import java.io.File

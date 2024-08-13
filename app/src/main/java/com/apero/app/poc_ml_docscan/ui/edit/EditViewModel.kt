@@ -1,11 +1,11 @@
-package com.apero.app.poc_ml_docscan.edit
+package com.apero.app.poc_ml_docscan.ui.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import arrow.core.nonEmptyListOf
 import arrow.core.toNonEmptyListOrNull
-import com.apero.app.poc_ml_docscan.edit.model.FilterMode
-import com.apero.app.poc_ml_docscan.edit.model.PagePreviewUiModel
+import com.apero.app.poc_ml_docscan.ui.edit.model.FilterMode
+import com.apero.app.poc_ml_docscan.ui.edit.model.PagePreviewUiModel
 import com.apero.app.poc_ml_docscan.image_processing.model.ResizeTransformation
 import com.apero.app.poc_ml_docscan.model.PdfPageId
 import com.apero.app.poc_ml_docscan.scan.common.model.InternalImage

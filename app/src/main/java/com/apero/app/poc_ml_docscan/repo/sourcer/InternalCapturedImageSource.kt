@@ -2,7 +2,7 @@ package com.apero.app.poc_ml_docscan.repo.sourcer
 
 import android.content.Context
 import arrow.atomic.AtomicBoolean
-import com.apero.app.poc_ml_docscan.home.model.SessionId
+import com.apero.app.poc_ml_docscan.ui.home.model.SessionId
 import com.apero.app.poc_ml_docscan.scan.common.arrow.atomic.guardUntilTrue
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

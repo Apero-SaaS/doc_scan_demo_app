@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.home.custom
+package com.apero.app.poc_ml_docscan.ui.home.custom
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -12,7 +12,7 @@ import android.util.SizeF
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.apero.app.poc_ml_docscan.R
-import com.apero.app.poc_ml_docscan.home.model.InferResult
+import com.apero.app.poc_ml_docscan.ui.home.model.InferResult
 import com.apero.app.poc_ml_docscan.scan.common.model.Offset
 import timber.log.Timber
 

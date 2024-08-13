@@ -1,4 +1,4 @@
-package com.apero.app.poc_ml_docscan.home
+package com.apero.app.poc_ml_docscan.ui.home
 
 import androidx.camera.core.CameraUnavailableException
 import androidx.camera.core.ImageProxy
@@ -12,17 +12,17 @@ import androidx.work.await
 import arrow.atomic.AtomicInt
 import arrow.atomic.update
 import com.apero.app.poc_ml_docscan.MyApp
-import com.apero.app.poc_ml_docscan.home.model.CaptureMode
-import com.apero.app.poc_ml_docscan.home.model.InferResult
-import com.apero.app.poc_ml_docscan.home.model.ScanMode
-import com.apero.app.poc_ml_docscan.home.model.ScanModeSelector
-import com.apero.app.poc_ml_docscan.home.model.TakePictureState
-import com.apero.app.poc_ml_docscan.home.model.takePictureAsync
+import com.apero.app.poc_ml_docscan.ui.home.model.CaptureMode
+import com.apero.app.poc_ml_docscan.ui.home.model.InferResult
+import com.apero.app.poc_ml_docscan.ui.home.model.ScanMode
+import com.apero.app.poc_ml_docscan.ui.home.model.ScanModeSelector
+import com.apero.app.poc_ml_docscan.ui.home.model.TakePictureState
+import com.apero.app.poc_ml_docscan.ui.home.model.takePictureAsync
 import com.apero.app.poc_ml_docscan.repo.ScanDocumentRepository
 import com.apero.app.poc_ml_docscan.repo.sourcer.InternalCapturedImageSource
 import com.apero.app.poc_ml_docscan.scan.common.model.InternalImage
 import com.apero.app.poc_ml_docscan.scan.common.util.traceAsync
-import com.documentscan.simplescan.scanpdf.ui.camera.model.ScanModeBadges
+import com.apero.app.poc_ml_docscan.model.ScanModeBadges
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.android.annotation.KoinViewModel
 import timber.log.Timber
 import kotlin.time.measureTimedValue
 
